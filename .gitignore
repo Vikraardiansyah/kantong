@@ -1,3 +1,17 @@
-*.jar
+# CLI build output (only this file: gradle/wrapper/gradle-wrapper.jar must stay in the repo)
+/kantong.jar
+
+# IDE
 .idea/
 *.iml
+
+# Gradle and Android build output
+.gradle/
+.kotlin/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Machine-specific settings (SDK path)
+local.properties
