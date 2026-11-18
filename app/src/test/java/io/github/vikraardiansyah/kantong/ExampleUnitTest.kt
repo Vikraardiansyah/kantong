@@ -14,4 +14,11 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
     }
+
+    @Test
+    fun toRupiah_formatsThousands() {
+        assertEquals("Rp500", 500L.toRupiah())
+        assertEquals("Rp25.000", 25_000L.toRupiah())
+        assertEquals("Rp1.000.000", 1_000_000L.toRupiah())
+    }
 }
