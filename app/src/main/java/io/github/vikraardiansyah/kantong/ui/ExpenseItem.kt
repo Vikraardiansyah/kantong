@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +18,7 @@ import io.github.vikraardiansyah.kantong.toRupiah
 import io.github.vikraardiansyah.kantong.ui.theme.KantongTheme
 
 @Composable
-fun ExpenseItem(expense: Expense, modifier: Modifier = Modifier) {
+fun ExpenseItem(expense: Expense, onDelete: () -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -29,6 +30,7 @@ fun ExpenseItem(expense: Expense, modifier: Modifier = Modifier) {
             Text(expense.category, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Text(expense.amount.toRupiah())
+        TextButton(onClick = onDelete) { Text("Delete") }
     }
 }
 
@@ -36,6 +38,6 @@ fun ExpenseItem(expense: Expense, modifier: Modifier = Modifier) {
 @Composable
 private fun ExpenseItemPreview() {
     KantongTheme {
-        ExpenseItem(Expense(1, "Nasi goreng", "Food", 25_000))
+        ExpenseItem(Expense(1, "Nasi goreng", "Food", 25_000), {})
     }
 }
