@@ -12,7 +12,7 @@ The current version is a terminal app written in plain Kotlin:
 - Show the largest transaction
 - Amounts are formatted as Indonesian rupiah, for example Rp25.000
 
-The bookkeeping logic (`Buku`) is kept separate from the terminal input and output, so it can move into a ViewModel unchanged when the Compose app starts.
+The bookkeeping logic (`Ledger`) is kept separate from the terminal input and output, so it can move into a ViewModel unchanged when the Compose app starts.
 
 ## Run
 

@@ -12,12 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.github.vikraardiansyah.kantong.Transaksi
+import io.github.vikraardiansyah.kantong.Expense
 import io.github.vikraardiansyah.kantong.toRupiah
 import io.github.vikraardiansyah.kantong.ui.theme.KantongTheme
 
 @Composable
-fun TransaksiItem(t: Transaksi, modifier: Modifier = Modifier) {
+fun ExpenseItem(expense: Expense, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -25,17 +25,17 @@ fun TransaksiItem(t: Transaksi, modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(t.nama, fontWeight = FontWeight.Bold)
-            Text(t.kategori, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(expense.name, fontWeight = FontWeight.Bold)
+            Text(expense.category, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        Text(t.jumlah.toRupiah())
+        Text(expense.amount.toRupiah())
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun TransaksiItemPreview() {
+private fun ExpenseItemPreview() {
     KantongTheme {
-        TransaksiItem(Transaksi(1, "Nasi goreng", "Makan", 25_000))
+        ExpenseItem(Expense(1, "Nasi goreng", "Food", 25_000))
     }
 }

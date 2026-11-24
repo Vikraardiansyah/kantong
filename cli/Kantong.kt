@@ -1,113 +1,108 @@
 package com.example.latihan.kantong
 
-data class Transaksi(val id: Int, val nama: String, val kategori: String, val jumlah: Long)
+data class Expense(val id: Int, val name: String, val category: String, val amount: Long)
 
-sealed interface HasilTambah {
-    data class Berhasil(val transaksi: Transaksi) : HasilTambah
-    data class Gagal(val alasan: String) : HasilTambah
+sealed interface AddResult {
+    data class Success(val expense: Expense) : AddResult
+    data class Failure(val reason: String) : AddResult
 }
 
-fun formatRupiah(jumlah: Long): String =
-    "Rp${jumlah.toString().reversed().chunked(3).joinToString(".").reversed()}"
+fun formatRupiah(amount: Long): String =
+    "Rp${amount.toString().reversed().chunked(3).joinToString(".").reversed()}"
 
-class Buku {
+class Ledger {
     private var nextId = 1
-    var daftar: List<Transaksi> = emptyList()
+    var expenses: List<Expense> = emptyList()
         private set
 
-    fun tambah(nama: String, kategori: String, jumlahTeks: String): HasilTambah {
-        if (nama.isBlank()) return HasilTambah.Gagal("nama tidak boleh kosong")
-        val jumlah = jumlahTeks.toLongOrNull()
-            ?: return HasilTambah.Gagal("jumlah harus angka, contoh 25000")
-        if (jumlah <= 0) return HasilTambah.Gagal("jumlah harus lebih dari 0")
-        val transaksiBaru = Transaksi(nextId, nama, kategori, jumlah)
-        daftar = daftar + transaksiBaru
+    fun add(name: String, category: String, amountText: String): AddResult {
+        if (name.isBlank()) return AddResult.Failure("name must not be empty")
+        val amount = amountText.toLongOrNull()
+            ?: return AddResult.Failure("amount must be a number, e.g. 25000")
+        if (amount <= 0) return AddResult.Failure("amount must be greater than 0")
+        val newExpense = Expense(nextId, name, category, amount)
+        expenses = expenses + newExpense
         nextId++
-        return HasilTambah.Berhasil(transaksiBaru)
+        return AddResult.Success(newExpense)
     }
 
-    fun totalPerKategori(): Map<String, Long> =
-        daftar
-            .groupBy { it.kategori }
-            .mapValues { (_, isi) -> isi.sumOf { it.jumlah } }
+    fun totalByCategory(): Map<String, Long> =
+        expenses
+            .groupBy { it.category }
+            .mapValues { (_, items) -> items.sumOf { it.amount } }
 
-    fun terbesar(): Transaksi? =
-        daftar.maxByOrNull { it.jumlah }
+    fun largest(): Expense? =
+        expenses.maxByOrNull { it.amount }
 }
 
 fun main() {
-    val buku = Buku()
+    val ledger = Ledger()
     while (true) {
-        println("1) Tambah  2) Daftar  3) Total per kategori  4) Terbesar  0) Keluar")
+        println("1) Add  2) List  3) Total by category  4) Largest  0) Exit")
         print("> ")
-        val pilihan = readln()
-        when (pilihan) {
+        val choice = readln()
+        when (choice) {
             "1" -> {
-                print("Nama: ")
-                val nama = readln()
-                print("Kategori: ")
-                val kategori = readln()
-                print("Jumlah: ")
-                val jumlah = readln()
+                print("Name: ")
+                val name = readln()
+                print("Category: ")
+                val category = readln()
+                print("Amount: ")
+                val amount = readln()
 
-                val hasil = buku.tambah(nama = nama, kategori = kategori, jumlahTeks = jumlah)
-                when (hasil) {
-                    is HasilTambah.Berhasil -> println(
-                        "Tersimpan: ${hasil.transaksi.nama} (${hasil.transaksi.kategori}) ${
-                            formatRupiah(
-                                hasil.transaksi.jumlah
-                            )
+                val result = ledger.add(name = name, category = category, amountText = amount)
+                when (result) {
+                    is AddResult.Success -> println(
+                        "Saved: ${result.expense.name} (${result.expense.category}) ${
+                            formatRupiah(result.expense.amount)
                         }"
                     )
 
-                    is HasilTambah.Gagal -> println("Gagal: ${hasil.alasan}")
+                    is AddResult.Failure -> println("Failed: ${result.reason}")
                 }
             }
 
             "2" -> {
-                val daftar = buku.daftar
-                if (daftar.isEmpty()) {
-                    println("Belum ada transaksi")
+                val expenses = ledger.expenses
+                if (expenses.isEmpty()) {
+                    println("No expenses yet")
                 } else {
-                    daftar.forEach { (_, nama, kategori, jumlah) ->
-                        println("$nama ($kategori) ${formatRupiah(jumlah)}")
+                    expenses.forEach { (_, name, category, amount) ->
+                        println("$name ($category) ${formatRupiah(amount)}")
                     }
                 }
             }
 
             "3" -> {
-                val totalPerKategori = buku.totalPerKategori()
-                if (totalPerKategori.isEmpty()) {
-                    println("Belum ada transaksi")
+                val totalByCategory = ledger.totalByCategory()
+                if (totalByCategory.isEmpty()) {
+                    println("No expenses yet")
                 } else {
-                    totalPerKategori.forEach { (kategori, jumlah) ->
-                        println("$kategori: ${formatRupiah(jumlah)}")
+                    totalByCategory.forEach { (category, total) ->
+                        println("$category: ${formatRupiah(total)}")
                     }
                 }
             }
 
             "4" -> {
-                val terbesar = buku.terbesar()
-                if (terbesar == null) {
-                    println("Belum ada transaksi")
+                val largest = ledger.largest()
+                if (largest == null) {
+                    println("No expenses yet")
                 } else {
                     println(
-                        "Terbesar: ${terbesar.nama} (${terbesar.kategori}) ${
-                            formatRupiah(
-                                terbesar.jumlah
-                            )
+                        "Largest: ${largest.name} (${largest.category}) ${
+                            formatRupiah(largest.amount)
                         }"
                     )
                 }
-
             }
 
             "0" -> {
-                println("Sampai jumpa!")
+                println("Bye!")
                 break
             }
 
-            else -> println("Pilihan tidak dikenal")
+            else -> println("Unknown option")
         }
     }
 }
