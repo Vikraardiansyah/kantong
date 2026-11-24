@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -20,9 +20,9 @@ fun AddExpenseForm(
     onSave: (name: String, category: String, amount: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var name by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("") }
-    var amountText by remember { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf("") }
+    var category by rememberSaveable { mutableStateOf("") }
+    var amountText by rememberSaveable { mutableStateOf("") }
     val isAmountInvalid = amountText.isNotBlank() && (amountText.toLongOrNull() ?: 0) <= 0
     val isValid =
         name.isNotBlank() && category.isNotBlank() && amountText.isNotBlank() && !isAmountInvalid

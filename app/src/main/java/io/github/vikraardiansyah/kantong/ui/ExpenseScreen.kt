@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,8 +16,8 @@ import io.github.vikraardiansyah.kantong.ui.theme.KantongTheme
 
 @Composable
 fun ExpenseScreen(modifier: Modifier = Modifier) {
-    var expenses by remember { mutableStateOf(emptyList<Expense>()) }
-    var nextId by remember { mutableIntStateOf(0) }
+    var expenses by rememberSaveable { mutableStateOf(emptyList<Expense>()) }
+    var nextId by rememberSaveable { mutableIntStateOf(0) }
 
     Column(modifier = modifier) {
         AddExpenseForm(onSave = { name, category, amount ->
