@@ -7,10 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import io.github.vikraardiansyah.kantong.ui.DaftarTransaksi
 import io.github.vikraardiansyah.kantong.ui.theme.KantongTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,8 +18,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             KantongTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    DaftarTransaksi(
+                        daftar = List(20) { i ->
+                            Transaksi(
+                                id = i,
+                                nama = "item $i",
+                                kategori = "category $i",
+                                jumlah = (i + 1) * 1000L
+                            )
+                        },
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -30,18 +35,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    KantongTheme {
-        Greeting("Android")
-    }
-}
