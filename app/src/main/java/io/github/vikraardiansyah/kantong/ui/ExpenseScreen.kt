@@ -4,29 +4,43 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.vikraardiansyah.kantong.Expense
 import io.github.vikraardiansyah.kantong.ui.theme.KantongTheme
 
 @Composable
-fun ExpenseScreen(modifier: Modifier = Modifier) {
-    var expenses by rememberSaveable { mutableStateOf(emptyList<Expense>()) }
-    var nextId by rememberSaveable { mutableIntStateOf(0) }
+fun ExpenseScreen(
+    modifier: Modifier = Modifier,
+    viewModel: KantongViewModel = viewModel(),
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    ExpenseContent(
+        expenses = state.expenses,
+        onSave = { name, category, amount -> viewModel.add(name, category, amount) },
+        onDelete = { id -> viewModel.delete(id) },
+        modifier = modifier,
+    )
+}
 
+@Composable
+fun ExpenseContent(
+    expenses: List<Expense>,
+    onSave: (name: String, category: String, amount: Long) -> Unit,
+    onDelete: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier = modifier) {
-        AddExpenseForm(onSave = { name, category, amount ->
-            expenses = expenses + Expense(nextId, name, category, amount)
-            nextId++
-        }, modifier = Modifier.padding(horizontal = 16.dp))
+        AddExpenseForm(
+            onSave = onSave,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
         ExpenseList(
             expenses = expenses,
-            onDelete = { id -> expenses = expenses.filter { it.id != id } }
+            onDelete = onDelete
         )
     }
 }
@@ -34,5 +48,6 @@ fun ExpenseScreen(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun ExpenseScreenPreview() {
-    KantongTheme { ExpenseScreen() }
+    val expenses = (1..5).map { Expense(it, "item $it", "category $it", it.toLong() * 10000) }
+    KantongTheme { ExpenseContent(expenses, { _, _, _ -> }, {}) }
 }
